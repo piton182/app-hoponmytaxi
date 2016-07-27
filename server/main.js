@@ -1,1 +1,1 @@
-import '../imports/api/rides.js';
+import '../imports/api/rides/rides.js';

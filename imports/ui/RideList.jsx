@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { createContainer } from 'meteor/react-meteor-data';
 
-import { Rides } from '../api/rides.js';
+import { Rides } from '../api/rides/rides.js';
 
 class RideList extends Component {
 
