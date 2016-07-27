@@ -42,6 +42,8 @@ class RideList extends Component {
 }
 
 export default createContainer(() => {
+  Meteor.subscribe('rides');
+
   return {
     selectedRide: Session.get('selectedRide'),
     rides: Rides.find({}).fetch(),

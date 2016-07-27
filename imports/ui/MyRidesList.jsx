@@ -40,6 +40,8 @@ class MyRidesList extends Component {
 }
 
 export default createContainer(() => {
+  Meteor.subscribe('rides');
+
   return {
     selectedRide: Session.get('selectedRide'),
     currentUser: Meteor.user(),
