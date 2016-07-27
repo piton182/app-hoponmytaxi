@@ -1,1 +1,1 @@
-import '../imports/api/rides/rides.js';
+import '/imports/startup/server';
