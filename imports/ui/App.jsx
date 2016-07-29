@@ -6,13 +6,16 @@ import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 import MyRidesList from './MyRidesList.jsx';
 import RideList from './RideList.jsx';
 import RideDetails from './RideDetails.jsx';
+import GoogleMap from './GoogleMap.jsx';
+
+import { Rides } from '../api/rides/rides.js';
 
 class App extends Component {
 
   _mapOptions() {
     return {
       center: new google.maps.LatLng(59.3293, 18.0686),
-      zoom: 13
+      zoom: 12
     };
   }
 
@@ -73,56 +76,9 @@ class App extends Component {
 export default createContainer(() => {
   return {
     googleMapsLoaded: GoogleMaps.loaded(),
+    markers: Rides.find({}).fetch().map((ride) => ({
+      lat: ride.from.location.coordinates[0],
+      lng: ride.from.location.coordinates[1],
+    })),
   }
 }, App);
-
-GoogleMap = React.createClass({
-  // propTypes: {
-  //   name: React.PropTypes.string.isRequired,
-  //   options: React.PropTypes.object.isRequired
-  // },
-  getInitialState() {
-    return {
-      marker: null,
-    }
-  },
-  componentDidMount() {
-    GoogleMaps.create({
-      name: this.props.name,
-      element: ReactDOM.findDOMNode(this),
-      options: this.props.options
-    });
-
-    // GoogleMaps.ready(this.props.name, function(map) {
-    //   var marker = new google.maps.Marker({
-    //     position: map.options.center,
-    //     map: map.instance
-    //   });
-    // });
-  },
-  componentWillUnmount() {
-    if (GoogleMaps.maps[this.props.name]) {
-      google.maps.event.clearInstanceListeners(GoogleMaps.maps[this.props.name].instance);
-      delete GoogleMaps.maps[this.props.name];
-    }
-  },
-  componentWillReceiveProps(nextProps) {
-    // console.log('googlemap.componentWillReceiveProps')
-    const map = GoogleMaps.maps[this.props.name];
-    if (map && nextProps.marker.lat && nextProps.marker.lng) {
-      if (this.state.marker) {
-        this.state.marker.setMap(null);
-      }
-      const marker = new google.maps.Marker({
-        position: {...nextProps.marker},
-        map: map.instance,
-      });
-      this.setState({
-        marker
-      });
-    }
-  },
-  render() {
-    return <div className="map-container"></div>;
-  }
-});

@@ -14,4 +14,10 @@ Meteor.startup(() => {
     key: 'AIzaSyAMUsNldKIjKx7FDU_NwrGYi9BXwxN-DLY',
     libraries: 'places'  // also accepts an array if you need more than one
   });
+
+  Tracker.autorun(() => {
+    if (Geolocation.latLng()) {
+      console.log(Geolocation.latLng());
+    }
+  });
 });
