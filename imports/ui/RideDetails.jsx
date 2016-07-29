@@ -46,7 +46,7 @@ class RideDetails extends Component {
                   <td>Date/time</td><td>{this.formatDatetime(ride.datetime.unix)}</td>
                 </tr>
                 <tr>
-                  <td>From</td><td>{ride.from}</td>
+                  <td>From</td><td>{ride.from.streetAddress}</td>
                 </tr>
                 <tr>
                   <td>To</td><td>{ride.to.name}</td>
@@ -84,5 +84,6 @@ export default createContainer(() => {
   return {
     selectedRide: Session.get('selectedRide'),
     currentUser: Meteor.user(),
+    googleMapsLoaded: GoogleMaps.loaded(),
   }
 }, RideDetails);
