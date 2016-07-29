@@ -13,8 +13,13 @@ class RideDetails extends Component {
     if (this.props.currentUser) {
       const ride = this.props.selectedRide;
       ride.corider = this.props.currentUser.username;
-      Rides.update({_id: ride._id}, ride);
-      Session.set('selectedRide', ride)
+      Meteor.call('rides.update', ride,
+        (err, res) => {
+          if(err){
+          }else{
+            Session.set('selectedRide', ride)
+          }
+        })
     }
   }
 
