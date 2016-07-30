@@ -23,7 +23,10 @@ class App extends Component {
     if (this.props.googleMapsLoaded) {
       return (
         <div>
-          <span style={{color: "green"}}>Open rides within radius: 1km</span>
+          { this.props.openRides.length === 0
+            ? <span style={{color: "orange"}}>No open rides at the moment within 1km from you</span>
+            : <span style={{color: "green"}}>Open rides within 1km from you</span>
+          }
           <GoogleMap
             name="mymap"
             options={this._mapOptions()}
@@ -77,11 +80,13 @@ class App extends Component {
 }
 
 export default createContainer(() => {
+  Meteor.subscribe('open.rides.withinRadius', Geolocation.latLng(), 1000);
+
   return {
     googleMapsLoaded: GoogleMaps.loaded(),
-    markers: Rides.find({}).fetch().map((ride) => ({
-      lat: ride.from.location.coordinates[0],
-      lng: ride.from.location.coordinates[1],
-    })),
+    openRides: Rides.find( { $or: [
+      { corider: { $exists: false } },
+      { corider: '' }
+    ] } ).fetch(),
   }
 }, App);
