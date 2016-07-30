@@ -22,10 +22,13 @@ class App extends Component {
   renderMap() {
     if (this.props.googleMapsLoaded) {
       return (
-        <GoogleMap
-          name="mymap"
-          options={this._mapOptions()}
-        />
+        <div>
+          <span style={{color: "green"}}>Open rides within radius: 1km</span>
+          <GoogleMap
+            name="mymap"
+            options={this._mapOptions()}
+          />
+        </div>
       )
     }
 

@@ -23,7 +23,8 @@ class GoogleMap extends Component {
 
         GoogleMaps.ready(this.props.name, (map) => {
             this.infowindow = new google.maps.InfoWindow();
-            this.placeMarkers(map.instance, this.props.rides);
+            this.removeMarkers();
+            this.placeMarkers(map.instance, this.props.openRides);
             if (this.props.currentLocation) {
                 map.instance.setCenter(this.props.currentLocation);
                 this.placeYouAreHereMarker(map.instance, this.props.currentLocation);
@@ -39,9 +40,10 @@ class GoogleMap extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        // console.log('rides', nextProps.openides);
         this.removeMarkers();
         const map = GoogleMaps.maps[this.props.name];
-        this.placeMarkers(map.instance, nextProps.rides);
+        this.placeMarkers(map.instance, nextProps.openRides);
         if (nextProps.currentLocation) {
             map.instance.setCenter(nextProps.currentLocation);
             this.placeYouAreHereMarker(map.instance, nextProps.currentLocation);
@@ -60,12 +62,14 @@ class GoogleMap extends Component {
     }
 
     placeMarkers(map, rides) {
+        // console.log('placing markers', rides.length);
         const markers = [];
         rides.forEach((ride) => {
             const marker = new google.maps.Marker({
                 position: new google.maps.LatLng(
                     ride.from.location.coordinates[0], ride.from.location.coordinates[1]
                 ),
+                draggable: true,
                 map,
                 title: ride.bkn_ref,
             });
@@ -82,6 +86,7 @@ class GoogleMap extends Component {
     }
 
     removeMarkers() {
+        console.log('removing markers', this.state.markers);
         this.state.markers.forEach((marker) => {
             marker.setMap(null);
         });
@@ -98,9 +103,14 @@ class GoogleMap extends Component {
 }
 
 export default createContainer(() => {
+    Meteor.subscribe('open.rides.withinRadius', Geolocation.latLng(), 1000);
+
     return {
         googleMapsLoaded: GoogleMaps.loaded(),
-        rides: Rides.find().fetch(),
         currentLocation: Geolocation.latLng(),
+        openRides: Rides.find( { $or: [
+            { corider: { $exists: false } },
+            { corider: '' }
+        ] } ).fetch(),
     }
 }, GoogleMap);

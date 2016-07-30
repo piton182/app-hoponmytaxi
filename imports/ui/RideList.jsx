@@ -14,8 +14,8 @@ class RideList extends Component {
     Session.set('selectedRide', ride);
   }
 
-  renderRides() {
-    return this.props.rides.map((ride) => {
+  renderRides(rides) {
+    return rides.map((ride) => {
       const style = this.props.selectedRide && this.props.selectedRide._id.valueOf() === ride._id.valueOf() ? {backgroundColor: "yellow"} : {};
       return <p key={ride._id.valueOf()}>
         <a href="#"
@@ -30,11 +30,11 @@ class RideList extends Component {
   render() {
     return (
       <div>
-        { this.props.rides.length === 0
+        { this.props.openRides.length === 0
           ? <span style={{color: "orange"}}>No available rides for given params...</span>
           : <div>
               <span>Rides:</span>
-              { this.renderRides() }
+              { this.renderRides(this.props.openRides) }
             </div> }
       </div>
     )
@@ -42,10 +42,13 @@ class RideList extends Component {
 }
 
 export default createContainer(() => {
-  Meteor.subscribe('rides');
+  Meteor.subscribe('open.rides.withinRadius', Geolocation.latLng(), 1000);
 
   return {
     selectedRide: Session.get('selectedRide'),
-    rides: Rides.find({}).fetch(),
+    openRides: Rides.find( { $or: [
+      { corider: { $exists: false } },
+      { corider: '' }
+    ] } ).fetch(),
   }
 }, RideList);

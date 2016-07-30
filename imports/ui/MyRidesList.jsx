@@ -10,8 +10,8 @@ class MyRidesList extends Component {
     Session.set('selectedRide', ride);
   }
 
-  renderMyRides() {
-    return (this.props.myRides.map((ride) => {
+  renderRides(rides) {
+    return (rides.map((ride) => {
       const style = this.props.selectedRide && this.props.selectedRide._id.valueOf() === ride._id.valueOf() ? {backgroundColor: 'yellow'} : {};
       return <span key={ride._id.valueOf()} style={style}>
         <a href="#" onClick={this.handleSelectRide.bind(this, ride)}>{ride.bkn_ref}</a>
@@ -29,7 +29,7 @@ class MyRidesList extends Component {
                 ? <span style={{color: "orange"}}>You have no active rides at the moment</span>
                 : <div>
                     <span>My rides:&nbsp;</span>
-                    { this.renderMyRides() }
+                    { this.renderRides(this.props.myRides) }
                   </div>
               }
             </div>
@@ -40,11 +40,11 @@ class MyRidesList extends Component {
 }
 
 export default createContainer(() => {
-  Meteor.subscribe('rides');
+  Meteor.subscribe('my.rides');
 
   return {
     selectedRide: Session.get('selectedRide'),
     currentUser: Meteor.user(),
-    myRides: Meteor.user() ? Rides.find({corider: Meteor.user().username}).fetch() : [],
+    myRides: Meteor.user() ? Rides.find( { corider: Meteor.user().username } ).fetch() : [],
   }
 }, MyRidesList);
