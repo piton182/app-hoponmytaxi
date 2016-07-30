@@ -17,7 +17,7 @@ Meteor.startup(() => {
 
   Tracker.autorun(() => {
     if (Geolocation.latLng()) {
-      console.log(Geolocation.latLng());
+      console.log('currentLocation', Geolocation.latLng());
     }
   });
 });

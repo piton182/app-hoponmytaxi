@@ -24,7 +24,10 @@ class GoogleMap extends Component {
         GoogleMaps.ready(this.props.name, (map) => {
             this.infowindow = new google.maps.InfoWindow();
             this.placeMarkers(map.instance, this.props.rides);
-
+            if (this.props.currentLocation) {
+                map.instance.setCenter(this.props.currentLocation);
+                this.placeYouAreHereMarker(map.instance, this.props.currentLocation);
+            }
         });
     }
 
@@ -37,18 +40,23 @@ class GoogleMap extends Component {
 
     componentWillReceiveProps(nextProps) {
         this.removeMarkers();
-        this.placeMarkers(GoogleMaps.maps[this.props.name].instance, nextProps.rides);
+        const map = GoogleMaps.maps[this.props.name];
+        this.placeMarkers(map.instance, nextProps.rides);
         if (nextProps.currentLocation) {
-            new google.maps.Marker({
-                position: this.props.currentLocation,
-                map: GoogleMaps.maps[this.props.name].instance,
-                icon: {
-                    url: 'images/youarehere.png',
-                    scaledSize: new google.maps.Size(32, 32),
-                    // origin: new google.maps.Point(0, 0),
-                },
-            });
+            map.instance.setCenter(nextProps.currentLocation);
+            this.placeYouAreHereMarker(map.instance, nextProps.currentLocation);
         }
+    }
+
+    placeYouAreHereMarker(map, position) {
+        new google.maps.Marker({
+            position,
+            map,
+            icon: {
+                url: 'images/youarehere.png',
+                scaledSize: new google.maps.Size(32, 32),
+            },
+        });
     }
 
     placeMarkers(map, rides) {
