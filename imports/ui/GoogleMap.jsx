@@ -11,25 +11,53 @@ class GoogleMap extends Component {
 
         this.state = {
             markers: [],
-        }
+        };
+    }
+
+    refreshRides(userLocation) {
+        const self = this;
+        Meteor.call('rides.get.open.withinRadius', userLocation, 1000,
+            (err, rides) => {
+                if (!err) {
+                    self.refreshMarkers(rides);
+                }
+            }
+        );
     }
 
     componentDidMount() {
         GoogleMaps.create({
             name: this.props.name,
             element: ReactDOM.findDOMNode(this),
-            options: this.props.options,
+            options: {
+                center: this.getMapCenter(),
+                zoom: 12,
+            },
         });
 
         GoogleMaps.ready(this.props.name, (map) => {
             this.infowindow = new google.maps.InfoWindow();
-            this.removeMarkers();
-            this.placeMarkers(map.instance, this.props.openRides);
-            if (this.props.currentLocation) {
-                map.instance.setCenter(this.props.currentLocation);
-                this.placeYouAreHereMarker(map.instance, this.props.currentLocation);
+
+            this.centerMap(this.getMapCenter());
+            this.refreshRides(this.props.userLocation);
+
+            if (this.props.userLocation) {
+                this.refreshYouAreHereMarker(this.props.userLocation);
             }
         });
+    }
+
+    getMapCenter() {
+        return this.props.userLocation ? this.props.userLocation : this.props.defaultCenter;
+    }
+
+    centerMap(latLng) {
+        GoogleMaps.maps[this.props.name].instance.setCenter(latLng);
+    }
+
+    refreshMarkers(rides) {
+        this.removeMarkers();
+        this.placeMarkers(rides);
     }
 
     componentWillUnmount() {
@@ -40,28 +68,43 @@ class GoogleMap extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        // console.log('rides', nextProps.openides);
-        this.removeMarkers();
-        const map = GoogleMaps.maps[this.props.name];
-        this.placeMarkers(map.instance, nextProps.openRides);
-        if (nextProps.currentLocation) {
-            map.instance.setCenter(nextProps.currentLocation);
-            this.placeYouAreHereMarker(map.instance, nextProps.currentLocation);
+        this.refreshRides(nextProps.userLocation);
+        if (nextProps.userLocation) {
+            this.refreshYouAreHereMarker(nextProps.userLocation);
+            this.centerMap(nextProps.userLocation);
+        }
+
+    }
+
+    refreshYouAreHereMarker(userLocation) {
+        this.removeYouAreHereMarker();
+        this.placeYouAreHereMarker(userLocation)
+    }
+
+    removeYouAreHereMarker() {
+        if (this.state.youAreHereMarker) {
+            this.state.youAreHereMarker.setMap(null);
+            this.setState({
+                youAreHereMarker: null,
+            })
         }
     }
 
-    placeYouAreHereMarker(map, position) {
-        new google.maps.Marker({
-            position,
-            map,
+    placeYouAreHereMarker(userLocation) {
+        const youAreHereMarker = new google.maps.Marker({
+            position: userLocation,
+            map: GoogleMaps.maps[this.props.name].instance,
             icon: {
                 url: 'images/youarehere.png',
                 scaledSize: new google.maps.Size(32, 32),
             },
         });
+        this.setState({
+            youAreHereMarker
+        })
     }
 
-    placeMarkers(map, rides) {
+    placeMarkers(rides) {
         // console.log('placing markers', rides.length);
         const markers = [];
         rides.forEach((ride) => {
@@ -70,13 +113,14 @@ class GoogleMap extends Component {
                     ride.from.location.coordinates[0], ride.from.location.coordinates[1]
                 ),
                 draggable: true,
-                map,
+                map: GoogleMaps.maps[this.props.name].instance,
                 title: ride.bkn_ref,
             });
             marker.addListener('click', () => {
+                // TODO:
                 Session.set('selectedRide', ride);
                 this.infowindow.setContent(ride.bkn_ref);
-                this.infowindow.open(map, marker);
+                this.infowindow.open(GoogleMaps.maps[this.props.name].instance, marker);
             });
             markers.push(marker);
         });
@@ -86,7 +130,6 @@ class GoogleMap extends Component {
     }
 
     removeMarkers() {
-        console.log('removing markers', this.state.markers);
         this.state.markers.forEach((marker) => {
             marker.setMap(null);
         });
@@ -103,14 +146,9 @@ class GoogleMap extends Component {
 }
 
 export default createContainer(() => {
-    Meteor.subscribe('open.rides.withinRadius', Geolocation.latLng(), 1000);
-
     return {
         googleMapsLoaded: GoogleMaps.loaded(),
-        currentLocation: Geolocation.latLng(),
-        openRides: Rides.find( { $or: [
-            { corider: { $exists: false } },
-            { corider: '' }
-        ] } ).fetch(),
+        userLocation: Session.get('currentLocation'),
+        selectedRide: Session.get('selectedRide'),
     }
 }, GoogleMap);

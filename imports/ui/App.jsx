@@ -7,29 +7,35 @@ import MyRidesList from './MyRidesList.jsx';
 import RideList from './RideList.jsx';
 import RideDetails from './RideDetails.jsx';
 import GoogleMap from './GoogleMap.jsx';
+import UserCurrentLocation from './UserCurrentLocation.jsx';
 
 import { Rides } from '../api/rides/rides.js';
 
 class App extends Component {
 
-  _mapOptions() {
-    return {
-      center: new google.maps.LatLng(59.3293, 18.0686),
-      zoom: 12
-    };
+  constructor(props) {
+    super(props);
+
+
+  }
+
+  componentWillReceiveProps(nextProps) {
+
   }
 
   renderMap() {
     if (this.props.googleMapsLoaded) {
       return (
         <div>
-          { this.props.openRides.length === 0
-            ? <span style={{color: "orange"}}>No open rides at the moment within 1km from you</span>
-            : <span style={{color: "green"}}>Open rides within 1km from you</span>
-          }
+          {/*{ this.props.rides.length === 0*/}
+            {/*? (this.props.userLocation*/}
+                {/*? <span style={{color: "orange"}}>No open rides at the moment within 1km from you</span>*/}
+                {/*: <span style={{color: "orange"}}>No open rides at the moment within 1km from city center</span>)*/}
+            {/*: <span style={{color: "green"}}>Open rides within 1km from you</span>*/}
+          {/*}*/}
           <GoogleMap
             name="mymap"
-            options={this._mapOptions()}
+            defaultCenter={new google.maps.LatLng(59.3293, 18.0686)}
           />
         </div>
       )
@@ -57,18 +63,19 @@ class App extends Component {
         </div>
         <div>
           { this.renderMap() }
+          <UserCurrentLocation />
         </div>
         <div>
           <table>
           <tbody>
             <tr>
-              <td></td>
+              {/*<td></td>*/}
               <td>
                 <MyRidesList />
               </td>
             </tr>
             <tr>
-              <td style={{border: "5px solid pink"}}><RideList /></td>
+              {/*<td style={{border: "5px solid pink"}}><RideList /></td>*/}
               <td style={{border: "5px solid green"}}><RideDetails /></td>
             </tr>
           </tbody>
@@ -80,13 +87,9 @@ class App extends Component {
 }
 
 export default createContainer(() => {
-  Meteor.subscribe('open.rides.withinRadius', Geolocation.latLng(), 1000);
-
   return {
     googleMapsLoaded: GoogleMaps.loaded(),
-    openRides: Rides.find( { $or: [
-      { corider: { $exists: false } },
-      { corider: '' }
-    ] } ).fetch(),
+    userLocation: Session.get('currentLocation'),
+    rides: [],
   }
 }, App);

@@ -11,15 +11,14 @@ class RideDetails extends Component {
 
   handleJoinRide() {
     if (this.props.currentUser) {
-      const ride = this.props.selectedRide;
-      ride.corider = this.props.currentUser.username;
-      Meteor.call('rides.update', ride,
+      Meteor.call('rides.join', this.props.selectedRide._id,
         (err, res) => {
-          if(err){
-          }else{
-            Session.set('selectedRide', ride)
+          if (err) {
+            alert(err.error);
+          } else {
+            Session.set('selectedRide', res);
           }
-        })
+        });
     }
   }
 
