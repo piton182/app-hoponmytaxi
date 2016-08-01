@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { createContainer } from 'meteor/react-meteor-data';
 
-import { Rides } from '../api/rides/rides.js';
+import { Rides } from '../../api/rides/rides.js';
 
 class GoogleMap extends Component {
 
@@ -147,7 +147,7 @@ class GoogleMap extends Component {
 
 export default createContainer(() => {
     return {
-        googleMapsLoaded: GoogleMaps.loaded(),
+
         userLocation: Session.get('currentLocation'),
         selectedRide: Session.get('selectedRide'),
     }

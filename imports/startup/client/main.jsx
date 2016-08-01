@@ -4,20 +4,18 @@ import { render } from 'react-dom';
 
 import './main.html';
 
-import App from '../../../imports/ui/App.jsx';
+import App from '../../ui/App.jsx';
 
 Meteor.startup(() => {
-  render(<App />, document.getElementById('render-target'));
+    // loading Google Maps API
+    GoogleMaps.load({
+        key: 'AIzaSyAMUsNldKIjKx7FDU_NwrGYi9BXwxN-DLY',
+        libraries: 'places'  // also accepts an array if you need more than one
+    });
 
-  // loading Google Maps API
-  GoogleMaps.load({
-    key: 'AIzaSyAMUsNldKIjKx7FDU_NwrGYi9BXwxN-DLY',
-    libraries: 'places'  // also accepts an array if you need more than one
-  });
+    render(<App />, document.getElementById('render-target'));
 
-  Tracker.autorun(() => {
-    if (Geolocation.latLng()) {
-      console.log('currentLocation', Geolocation.latLng());
-    }
-  });
+    Tracker.autorun(() => {
+        Session.set('autoDetectedCurrentLocation', Geolocation.latLng());
+    });
 });

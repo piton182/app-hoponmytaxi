@@ -24,3 +24,6 @@ accounts-password@1.2.12
 momentjs:moment
 jeremy:geocomplete
 mdg:geolocation
+underscorestring:underscore.string
+rajit:bootstrap3-datepicker
+twbs:bootstrap
