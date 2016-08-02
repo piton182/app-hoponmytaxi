@@ -13,13 +13,19 @@ export default class JoinButton extends Component {
     render() {
         console.log(this.props.ride);
         if (this.props.visible) {
-            if (this.props.user && this.props.ride && this.props.ride.corider === this.props.user.username) {
-                return <div id="map-btn-join">
-                    <span>Joined</span>
-                </div>;
+            if (this.props.user) {
+                if (this.props.ride && this.props.ride.corider === this.props.user.username) {
+                    return <div id="map-btn-join">
+                        <span>Joined</span>
+                    </div>;
+                } else {
+                    return <div id="map-btn-join" onClick={ this.handleClick.bind(this) }>
+                        <span>Join</span>
+                    </div>;
+                }
             } else {
-                return <div id="map-btn-join" onClick={ this.handleClick.bind(this) }>
-                    <span>Join</span>
+                return <div id="map-btn-join">
+                    <span>Sign in to join</span>
                 </div>;
             }
         } else {
