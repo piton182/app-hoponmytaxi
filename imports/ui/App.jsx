@@ -131,14 +131,14 @@ class App extends Component {
         return (
             <div id="map-page">
                 <div id="map"></div>
-                <Avatar />
+                <Avatar user={ this.props.currentUser }/>
                 {/*<div id="map-logo">*/}
                     {/*Taxi Hop-On*/}
                 {/*</div>*/}
                 <Ride ride={ this.props.selectedRide }/>
                 <Filter visible={ !this.props.selectedRide }/>
                 <InfoBox visible={ !this.props.selectedRide }/>
-                <JoinButton visible={ !!this.props.selectedRide }/>
+                <JoinButton visible={ !!this.props.selectedRide } ride={ this.props.selectedRide } user={ this.props.currentUser }/>
             </div>
         );
     }
@@ -150,5 +150,6 @@ export default createContainer(() => {
         rides: Rides.find().fetch(),
         mapReady: Session.get('mapReady'),
         selectedRide: Session.get('selectedRideId') && Rides.findOne(new Mongo.ObjectID(Session.get('selectedRideId'))),
+        currentUser: Meteor.user(),
     }
 }, App);

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
 
-import AccountsUIWrapper from './AccountsUIWrapper.jsx';
+import AccountsUIWrapper from '../AccountsUIWrapper.jsx';
 
 class Me extends Component {
     render() {

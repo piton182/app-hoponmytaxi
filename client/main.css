@@ -64,6 +64,14 @@ div {
   left: 10rem;
   color: white;
 }
+#profile-loginButtons {
+  position: absolute;
+  width: 45rem;
+  height: 45rem;
+  z-index: 200;
+  top: 25rem;
+  left: 60rem;
+}
 #map-info-box {
   position: absolute;
   bottom: 10rem;
