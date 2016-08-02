@@ -60,6 +60,7 @@ npm-bcrypt@0.8.7
 npm-mongo@1.5.45
 observe-sequence@1.0.12
 ordered-dict@1.0.8
+pauloborges:mapbox@2.2.3_2
 promise@0.8.3
 rajit:bootstrap3-datepicker@1.5.1
 random@1.0.10
