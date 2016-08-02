@@ -64,7 +64,7 @@ div {
   left: 10rem;
   color: white;
 }
-#map-action-btn {
+#map-info-box {
   position: absolute;
   bottom: 10rem;
   left: 10rem;
@@ -79,8 +79,20 @@ div {
   color: white;
   z-index: 10;
 }
-#map-action-btn .active {
+#map-btn-join {
+  position: absolute;
+  bottom: 10rem;
+  left: 10rem;
+  right: 10rem;
+  height: 50rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16rem;
   background-color: #8BC34A;
+  text-align: center;
+  color: white;
+  z-index: 10;
 }
 #map-filter {
   bottom: 70rem;
@@ -114,7 +126,7 @@ div {
   float: right;
   height: 20rem;
   padding-left: 20rem;
-  background-image: url(../img/icons/cross.png);
+  background-image: url(/images/icons/cross.png);
   background-size: contain;
   background-repeat: no-repeat;
 }
@@ -123,7 +135,7 @@ div {
   height: 20rem;
   padding-top: 2rem;
   padding-left: 25rem;
-  background-image: url(../img/icons/location.png);
+  background-image: url(/images/icons/location.png);
   background-size: contain;
   background-repeat: no-repeat;
 }

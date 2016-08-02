@@ -12,3 +12,7 @@ Meteor.publish('my.rides', function() {
     return [];
   }
 });
+
+Meteor.publish('all.rides', function() {
+    return Rides.find();
+});
